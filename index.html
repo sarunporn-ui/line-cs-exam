@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>แบบทดสอบ LINE Ecosystem สำหรับทีม CS</title>
+    <title>แบบทดสอบข้อเขียน LINE Ecosystem สำหรับทีม CS</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap" rel="stylesheet">
 
@@ -21,36 +21,27 @@
         button:disabled { background-color: #95a5a6; cursor: not-allowed; }
         .hidden { display: none !important; }
         .question-card { background: #fafafa; border-left: 5px solid var(--primary-color); padding: 15px; margin-bottom: 20px; border-radius: 4px; }
-        .choice-label { display: block; padding: 10px; background: #fff; border: 1px solid #eee; margin-bottom: 8px; border-radius: 4px; cursor: pointer; transition: background 0.2s; }
-        .choice-label:hover { background: #eefbee; }
-        input[type="radio"] { margin-right: 10px; }
         #timer-display { position: sticky; top: 0; background: var(--card-bg); padding: 10px; text-align: right; font-size: 18px; font-weight: bold; color: #d35400; border-bottom: 2px solid #eee; z-index: 100; }
-        .result-item { background: #ffeaea; padding: 15px; margin-bottom: 15px; border-left: 5px solid #e74c3c; border-radius: 4px; page-break-inside: avoid; }
-        .essay-result { background: #fdfae3; border-left: 5px solid #f39c12; }
-        .correct-ans { color: #27ae60; font-weight: bold; margin-top: 10px; }
-        .explanation { background: #fff; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 14px;}
-        .section-title { background: #2c3e50; color: white; padding: 10px; border-radius: 4px; margin-top: 30px; }
-        .btn-group button { margin-top: 10px; }
-        #btn-download { background-color: #2980b9; }
+        .result-item { background: #fdfae3; padding: 15px; margin-bottom: 15px; border-left: 5px solid #f39c12; border-radius: 4px; page-break-inside: avoid; }
+        .section-title { background: #2c3e50; color: white; padding: 10px; border-radius: 4px; margin-top: 30px; margin-bottom: 20px; }
+        #btn-download { background-color: #2980b9; margin-top: 10px; }
         #btn-download:hover { background-color: #1a5276; }
-        #btn-retake { background-color: #7f8c8d; }
+        #btn-retake { background-color: #7f8c8d; margin-top: 10px; }
         #btn-retake:hover { background-color: #636e72; }
 
-        /* จัดหน้ากระดาษสำหรับเวลาปริ้น PDF ให้ออกมาสวยงามและไม่ขาด */
         @media print {
             body { background-color: #fff; padding: 0; }
             .container { box-shadow: none; border: none; max-width: 100%; padding: 0; margin: 0; }
             .btn-group, #timer-display { display: none !important; }
-            .result-item, .question-card { page-break-inside: avoid; border: 1px solid #ddd; }
-            h1, h2, h3, .section-title { page-break-after: avoid; }
+            .result-item { page-break-inside: avoid; border: 1px solid #ddd; }
         }
     </style>
 </head>
 <body>
 
 <div class="container" id="screen-start">
-    <h1>แบบทดสอบทักษะ LINE Ecosystem</h1>
-    <h2>สำหรับทีม Customer Service</h2>
+    <h1>แบบทดสอบข้อเขียน</h1>
+    <h2>LINE Ecosystem สำหรับทีม CS</h2>
     <div class="form-group">
         <label for="student-name">ชื่อ-นามสกุลผู้ทดสอบ:</label>
         <input type="text" id="student-name" placeholder="กรอกชื่อของคุณ" required>
@@ -70,24 +61,21 @@
 
 <div class="container hidden" id="screen-result">
     <div id="pdf-content">
-        <h1 style="text-align: center;">ผลการทดสอบ LINE Ecosystem</h1>
+        <h1 style="text-align: center;">ผลการทดสอบข้อเขียน</h1>
         <h3 id="result-summary"></h3>
         <hr style="margin-bottom: 20px;">
-        <div id="wrong-answers-container"></div>
         <div id="essay-answers-container"></div>
     </div>
     
     <div class="btn-group">
         <button id="btn-download" onclick="window.print()">บันทึกเป็น PDF / ปริ้นผลสอบ</button>
-        <button id="btn-retake" onclick="location.reload()">ทำแบบทดสอบอีกครั้ง</button>
+        <button id="btn-retake" onclick="location.reload()">ทำแบบทดสอบใหม่</button>
     </div>
 </div>
 
 <script>
-    // URL ของ Google Sheets (ใส่ให้เรียบร้อยแล้ว)
     const scriptURL = 'https://script.google.com/macros/s/AKfycbxt1NS5wV7wq_LJ6mikb0tpr09Gjj_X5k5nybjvYgG4Wj14cXIMLNFZV4BBrO0YZcyF9A/exec'; 
 
-    // ข้อสอบอัตนัย 16 ข้อ
     const essayQuestionsData = [
         { q: `1. ลูกค้าทักมาโวยวายว่าไม่มีคนตอบเลยจะใช้ข้อความด่วน เนื่องจากเราติดเรียน ไม่มีคนตอบลูกค้าเลยผ่านมา 4 ชั่วโมงแล้ว ลูกค้าหงุดหงิดแล้วพิมพ์มาด่าว่าทำงานกันยังไง ทำไมไม่มีคนอยู่หน้างานเลย เราจะพิมพ์ตอบและให้ทำไงให้ลูกค้าสงบลง` },
         { q: `2. ในกลุ่ม LINE OA ลูกค้า มีคนดูแลหลายฝ่าย ลูกค้าทักมาบอกให้ซื้อแพ็คเกจ OA พอซื้อเสร็จลูกค้าทักมาบอกว่า ไม่สามารถ Broadcast ได้ เคสนี้เกิดอะไรขึ้น` },
@@ -111,11 +99,8 @@
     let secondsElapsed = 0;
     let userName = "";
     let testDateStr = "";
-    let wrongAnswersData = [];
     let essayAnswersData = [];
-    let finalScore = 0;
 
-    // ตั้งค่าวันที่ปัจจุบัน
     document.getElementById('test-date').valueAsDate = new Date();
 
     function formatTime(totalSeconds) {
@@ -141,45 +126,22 @@
 
     function renderQuestions() {
         const container = document.getElementById('quiz-container');
-        let html = '<h3 class="section-title">ส่วนที่ 1: ปรนัย (เลือกคำตอบที่ถูกต้องที่สุด)</h3>';
+        let html = '<h3 class="section-title">ข้อสอบข้อเขียน (กรุณาพิมพ์คำตอบ)</h3>';
         
-        questionsData.forEach((item, index) => {
-            html += `<div class="question-card"><p><strong>ข้อที่ ${index + 1}:</strong> ${item.q}</p>`;
-            for (const [key, value] of Object.entries(item.choices)) {
-                html += `<label class="choice-label"><input type="radio" name="q${index}" value="${key}"> ${key}. ${value}</label>`;
-            }
-            html += `</div>`;
+        essayQuestionsData.forEach((item, index) => {
+            html += `<div class="question-card">
+                <p><strong>ข้อที่ ${index + 1}:</strong> ${item.q}</p>
+                <textarea id="essay-q${index}" class="essay-textarea" placeholder="พิมพ์คำตอบของคุณที่นี่..."></textarea>
+            </div>`;
         });
-
-        if(essayQuestionsData.length > 0) {
-            html += `<h3 class="section-title">ส่วนที่ 2: อัตนัย (พิมพ์คำตอบลงในช่องว่าง - รอ Manager ตรวจ)</h3>`;
-            essayQuestionsData.forEach((item, index) => {
-                html += `<div class="question-card"><p><strong>${item.q}</strong></p><textarea id="essay-q${index}" class="essay-textarea" placeholder="พิมพ์คำตอบของคุณที่นี่..."></textarea></div>`;
-            });
-        }
         container.innerHTML = html;
     }
 
     function submitQuiz() {
         if(!confirm('คุณแน่ใจหรือไม่ว่าต้องการส่งคำตอบ?')) return;
         clearInterval(timerInterval);
-        finalScore = 0;
-        wrongAnswersData = [];
+        
         essayAnswersData = [];
-
-        questionsData.forEach((item, index) => {
-            const selectedOpt = document.querySelector(`input[name="q${index}"]:checked`);
-            const userAns = selectedOpt ? selectedOpt.value : "ไม่ได้ตอบ";
-            if (userAns === item.ans) { finalScore++; } 
-            else {
-                wrongAnswersData.push({
-                    qNum: index + 1, question: item.q, userAns: userAns,
-                    userAnsText: userAns !== "ไม่ได้ตอบ" ? item.choices[userAns] : "-",
-                    correctAns: item.ans, correctAnsText: item.choices[item.ans], explanation: item.exp
-                });
-            }
-        });
-
         essayQuestionsData.forEach((item, index) => {
             const answerText = document.getElementById(`essay-q${index}`).value.trim();
             essayAnswersData.push({ qNum: index + 1, question: item.q, userAns: answerText || "ไม่ได้ตอบ" });
@@ -196,47 +158,26 @@
         document.getElementById('result-summary').innerHTML = `
             ชื่อผู้สอบ: ${userName}<br>
             วันที่สอบ: ${testDateStr}<br>
-            ใช้เวลาไป: ${formatTime(secondsElapsed)} นาที<br>
-            คะแนนส่วนที่ 1 (ปรนัย): <span style="color:var(--primary-color); font-size: 24px;">${finalScore} / ${questionsData.length}</span>
+            ใช้เวลาไป: ${formatTime(secondsElapsed)} นาที
         `;
 
-        const wrongContainer = document.getElementById('wrong-answers-container');
-        if (wrongAnswersData.length === 0) {
-            wrongContainer.innerHTML = `<h3 style="color:var(--primary-color);">ยอดเยี่ยม! คุณตอบถูกทุกข้อในส่วนที่ 1 🎉</h3>`;
-        } else {
-            let html = `<h3>รายการข้อที่ตอบผิด (ส่วนที่ 1)</h3>`;
-            wrongAnswersData.forEach(item => {
-                html += `<div class="result-item"><p><strong>ข้อ ${item.qNum}:</strong> ${item.question}</p>
-                    <p style="color: #c0392b;">❌ คำตอบของคุณ: ${item.userAns}. ${item.userAnsText}</p>
-                    <div class="correct-ans">✅ เฉลยที่ถูกต้อง: ${item.correctAns}. ${item.correctAnsText}</div>
-                    <div class="explanation">💡 <strong>คำอธิบาย:</strong> ${item.explanation}</div></div>`;
-            });
-            wrongContainer.innerHTML = html;
-        }
-
         const essayContainer = document.getElementById('essay-answers-container');
-        if(essayAnswersData.length > 0) {
-            let html = `<h3 style="margin-top: 30px; border-top: 2px solid #eee; padding-top: 20px;">ส่วนที่ 2: คำตอบแบบอัตนัย (รอ Manager ตรวจ)</h3>`;
-            essayAnswersData.forEach(item => {
-                html += `<div class="result-item essay-result"><p><strong>${item.question}</strong></p>
-                    <p>📝 <strong>คำตอบของคุณ:</strong><br><span style="white-space: pre-wrap; display: block; padding-top: 10px; color: #333;">${item.userAns}</span></p></div>`;
-            });
-            essayContainer.innerHTML = html;
-        }
+        let html = `<h3 style="margin-top: 20px;">รายการคำตอบของคุณ:</h3>`;
+        essayAnswersData.forEach(item => {
+            html += `<div class="result-item"><p><strong>ข้อที่ ${item.qNum}:</strong> ${item.question}</p>
+                <p>📝 <strong>คำตอบ:</strong><br><span style="white-space: pre-wrap; display: block; padding-top: 10px; color: #333;">${item.userAns}</span></p></div>`;
+        });
+        essayContainer.innerHTML = html;
     }
 
     function sendDataToSheet() {
         if (!scriptURL) return;
 
-        let wrongDetailsText = wrongAnswersData.length > 0 ? wrongAnswersData.map(item => `ข้อ ${item.qNum}: ตอบ ${item.userAns}`).join(', ') : "ไม่มีข้อผิด";
-        let essayDetailsText = essayAnswersData.length > 0 ? essayAnswersData.map(item => `${item.question}\n- ตอบ: ${item.userAns}`).join('\n\n') : "-";
+        let essayDetailsText = essayAnswersData.map(item => `${item.question}\n- ตอบ: ${item.userAns}`).join('\n\n');
 
-        // แปลงข้อมูลเป็นรูปแบบฟอร์มเพื่อส่งเข้า Google Sheet โดยไม่ติดบล็อก
         const payload = new URLSearchParams();
         payload.append("name", userName);
         payload.append("date", testDateStr);
-        payload.append("score", finalScore + "/" + questionsData.length);
-        payload.append("wrong", wrongDetailsText);
         payload.append("essays", essayDetailsText);
 
         const retakeBtn = document.getElementById('btn-retake');
